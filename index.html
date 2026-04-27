@@ -1,14 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Page Title</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
-    <script src='main.js'></script>
+  <meta charset="UTF-8">
+  <title>농장 출입 기록</title>
 </head>
 <body>
-    <div></div>
+
+<h2>농장 출입 등록</h2>
+
+<form id="form">
+  농장명: <input type="text" id="farmName"><br><br>
+  출입자명: <input type="text" id="name"><br><br>
+  
+  차량 있음:
+  <input type="checkbox" id="hasCar" onchange="toggleCar()"><br>
+  차량번호: <input type="text" id="carNumber" disabled><br><br>
+
+  회사명: <input type="text" id="company"><br><br>
+  용건: <input type="text" id="purpose"><br><br>
+
+  소독여부:
+  <select id="disinfect">
+    <option value="O">O</option>
+    <option value="X">X</option>
+  </select><br><br>
+
+  메모:<br>
+  <textarea id="memo"></textarea><br><br>
+
+  <button type="submit">전송</button>
+</form>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbxPRB170BXyzXRgyO857wo2Ebtdp3wTrP0T6sceoE3PGGTeGIpkQjv-FEm_eiXoKgA/exec";
+
+function toggleCar() {
+  document.getElementById("carNumber").disabled = !document.getElementById("hasCar").checked;
+}
+
+document.getElementById("form").addEventListener("submit", async function(e){
+  e.preventDefault();
+
+  const data = {
+    farmName: document.getElementById("farmName").value,
+    name: document.getElementById("name").value,
+    carNumber: document.getElementById("hasCar").checked ? document.getElementById("carNumber").value : "",
+    company: document.getElementById("company").value,
+    purpose: document.getElementById("purpose").value,
+    disinfect: document.getElementById("disinfect").value,
+    memo: document.getElementById("memo").value
+  };
+
+ await fetch(API_URL, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(data)
+})
+.then(res => res.text())
+.then(res => {
+  console.log(res);
+  alert("응답: " + res);
+})
+.catch(err => {
+  console.error(err);
+  alert("에러 발생: " + err);
+});
+</script>
+
 </body>
-</html>>
+</html>
